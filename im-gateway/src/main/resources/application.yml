@@ -1,0 +1,56 @@
+
+server:
+  port: 8888
+
+spring:
+  application:
+    name: im-gateway
+  main:
+    allow-bean-definition-overriding: true
+
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  cloud:
+    nacos:
+      discovery:
+        server-addr: http://localhost:8848
+      config:
+        server-addr: http://localhost:8848
+        file-extension: yaml
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true #使用小写service-id
+      routes:
+      - id: im-admin
+        predicates:
+        - Path=/im-admin/admin/**
+        filters:
+        - StripPrefix=1
+        uri: lb://im-admin
+      - id: im-auth
+        uri: lb://im-auth
+        predicates:
+          - Path=/im-auth/oauth/**
+        filters:
+          - StripPrefix=1
+secure:
+  ignore:
+    urls: #配置白名单路径
+      - /**/*.js
+      - /**/*.css
+      - /**/*.png
+      - /**/*.ico
+      - /im-auth/oauth/token
+      - /im-portal/home/**
+      - /im-admin/admin/login
+      - /im-admin/admin/register
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.ipc.netty: DEBUG
+    reactor.netty: DEBUG

@@ -1,0 +1,14 @@
+
+spring:
+  application:
+    name: mall-monitor
+  boot:  # 不显示admin-server的监控信息
+    admin:
+      discovery:
+        ignored-services: ${spring.application.name}
+  cloud:
+    nacos:
+      discovery:
+        server-addr: http://localhost:8848
+server:
+  port: 8101

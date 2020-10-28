@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jamie.im.admin.mapper.PermissionMapper">
+
+        <!-- 通用查询映射结果 -->
+        <resultMap id="BaseResultMap" type="com.jamie.im.admin.domain.Permission">
+                <result column="id" property="id" />
+                    <result column="pid" property="pid" />
+                    <result column="name" property="name" />
+                    <result column="value" property="value" />
+                    <result column="icon" property="icon" />
+                    <result column="type" property="type" />
+                    <result column="uri" property="uri" />
+                    <result column="status" property="status" />
+                    <result column="create_time" property="createTime" />
+                    <result column="sort" property="sort" />
+        </resultMap>
+
+        <!-- 通用查询结果列 -->
+        <sql id="Base_Column_List">
+                id,
+            pid, name, value, icon, type, uri, status, create_time, sort
+        </sql>
+
+        <sql id="UPMS_Permission_Column_List">
+            up.id,
+            up.pid, up.name, up.value, up.icon, up.type, up.uri, up.status, up.create_time, up.sort,uarr.user_id as userId
+        </sql>
+
+        <sql id ="UPMS_Permission_Right_Join">
+            RIGHT JOIN upms_role_permission_relation AS urpr ON urpr.permission_id = up.id
+        </sql>
+
+        <sql id ="UPMS_Role_Permission_Right_Join">
+        	RIGHT JOIN upms_administrator_role_relation AS uarr ON urpr.role_id = uarr.role_id
+        </sql>
+
+
+        <select id="findPermissionByUserId" resultType="com.jamie.im.admin.dto.PermissionParam">
+
+            SELECT
+                <include refid="UPMS_Permission_Column_List"/>
+            FROM
+            upms_permission AS up
+            <include refid="UPMS_Permission_Right_Join"/>
+            <include refid="UPMS_Role_Permission_Right_Join"/>
+            <where>
+                uarr.user_id = #{userId}
+            </where>
+        </select>
+
+</mapper>
